@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container reading-list-details">
+    <h1>{{ reading_list.name }}</h1>
+    <p>Description: {{ reading_list.description or 'No description provided.' }}</p>
+    <hr>
+    <h2>Books in this list:</h2>
+    {% if books %}
+        <ul>
+            {% for book in books %}
+                <li>
+                    {{ book.title }} by {{ book.author }}  <!-- Adjust based on your actual model attributes -->
+                    <!-- Optional: Add a button or link to remove a book from the list -->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>This reading list is currently empty.</p>
+    {% endif %}
+    <!-- Optional: Add a form or link to add more books to the list -->
+    <form action="{{ url_for('add_book_to_reading_list', list_id=reading_list.id) }}" method="POST">
+        <input type="hidden" name="list_id" value="{{ reading_list.id }}">
+        <input type="submit" value="Add more books">
+    </form>
+    
+    <!-- Back to all reading lists -->
+    <a href="{{ url_for('view_reading_lists') }}" class="btn btn-default">Back to My Reading Lists</a>
+</div>
+{% endblock %}

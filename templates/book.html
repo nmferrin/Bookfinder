@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="book-details">
+    <h1>{{ book.title }}</h1>
+    <img src="https://covers.openlibrary.org/b/id/{{ book.covers[0] }}-L.jpg" alt="Cover of {{ book.title }}">
+    <!-- <h2>By {{ author_name }}</h2> -->
+    <p>{{ description|safe }}</p>
+
+    {% if book_description %}
+        <p>{{ book_description }}</p>
+    {% endif %}
+    <!-- Adjusting cover URL to use one of the cover IDs in the covers list -->
+    <!-- <img src="https://covers.openlibrary.org/b/id/{{ book.covers[0] }}-L.jpg" alt="Cover of {{ book.title }}"> -->
+    
+    <!-- <button class="favorite-btn" 
+            data-book-id="{{ book.key }}" 
+            data-title="{{ book.title }}" 
+            data-author="{{ author_name }}" 
+            data-cover-url="https://covers.openlibrary.org/b/id/{{ book.cover_i }}-M.jpg">
+        <i class="far fa-star"></i>
+    </button> -->
+</div>
+{% endblock %}

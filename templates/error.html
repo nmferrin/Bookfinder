@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <h2>Oops! Something went wrong.</h2>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% else %}
+        <p>We're sorry, but an unexpected error has occurred. Please try again later.</p>
+    {% endif %}
+</div>
+{% endblock %}

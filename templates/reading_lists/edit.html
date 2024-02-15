@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Edit Reading List</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.reading_list_id(value=list_id) }}  <!-- Include if you're using the hidden field -->
+        <div>
+            {{ form.name.label }} {{ form.name }}
+        </div>
+        <div>
+            {{ form.description.label }} {{ form.description }}
+        </div>
+        <div>
+            {{ form.submit }}
+        </div>
+    </form>
+</div>
+{% endblock %}
