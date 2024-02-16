@@ -55,6 +55,11 @@ def do_logout():
 def home():
     return render_template("home.html")
 
+#route for about page
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 
 
 # API ROUTES
@@ -232,7 +237,7 @@ def add_book_to_reading_list(list_id):
         selected_favorite = Favorite.query.get(int(form.book_id.data))
 
         # Create a new ReadingListBook entry
-        new_book_to_list = ReadingListBook(reading_list_id=list_id, favorite_id=selected_favorite.id, book_id=selected_favorite.book_id, author=selected_favorite.author, title=selected_favorite.title, cover_url=selected_favorite.cover_url)
+        new_book_to_list = ReadingListBook(reading_list_id=list_id, book_id=selected_favorite.book_id, author=selected_favorite.author, title=selected_favorite.title, cover_url=selected_favorite.cover_url)
         db.session.add(new_book_to_list)
         db.session.commit()
 

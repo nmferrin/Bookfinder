@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form method="POST">
+<form method="POST" class="container">
     {{ form.hidden_tag() }}
     {{ form.name.label }} {{ form.name }}
     {{ form.description.label }} {{ form.description }}
