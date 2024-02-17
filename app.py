@@ -67,12 +67,20 @@ def about():
 # Handles API search data
 @app.route("/search", methods=["GET", "POST"])
 def search():
+    reading_lists = None  # Initialize variable to hold reading lists
+    if g.user:
+        # Fetch the current user's reading lists if logged in
+        reading_lists = ReadingList.query.filter_by(user_id=g.user.id).all()
+
     if request.method == "POST":
         query = request.form["query"]
         results = search_books(query)
-        return render_template("search_results.html", results=results)
+        # Pass the user's reading lists along with the search results to the template
+        return render_template("search_results.html", results=results, reading_lists=reading_lists)
     else:
-        return render_template("search.html")
+        # If it's a GET request, just show the search page without results
+        # Make sure to pass the reading lists to the search template if it needs them
+        return render_template("search.html", reading_lists=reading_lists)
 
 #  Handles API book data
 @app.route('/book/<book_id>')
@@ -185,6 +193,22 @@ def add_favorite():
     else:
         return jsonify({'status': 'error', 'message': 'Book already in favorites.'})
     
+@app.route('/delete_favorite/<int:favorite_id>', methods=['POST'])
+def delete_favorite(favorite_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/login")
+    
+    favorite_to_delete = Favorite.query.get_or_404(favorite_id)
+    if favorite_to_delete.user_id != g.user.id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/profile")
+
+    db.session.delete(favorite_to_delete)
+    db.session.commit()
+    flash("Favorite removed successfully.", "success")
+    return redirect(url_for('user_profile'))
+    
 #Reading Lists
     
 
@@ -290,3 +314,34 @@ def view_reading_list(list_id):
     # Assuming ReadingListBook links books to reading lists
     books = ReadingListBook.query.filter_by(reading_list_id=list_id).all()
     return render_template('reading_lists/view.html', reading_list=reading_list, books=books)
+
+# @app.route('/add-to-reading-list', methods=['POST']) # Require user to be logged in
+# def add_to_reading_list():
+#     # Extract book_id and reading_list_id from the form data
+#     book_id = request.form.get('book_id')
+#     reading_list_id = request.form.get('reading_list_id')
+
+#     if not book_id or not reading_list_id:
+#         # Respond with an error if any field is missing
+#         return jsonify({'status': 'error', 'message': 'Missing data for adding book to reading list.'}), 400
+
+#     # Verify that the reading list belongs to the current user to prevent unauthorized additions
+#     reading_list = ReadingList.query.filter_by(id=reading_list_id, user_id=g.user.id).first()
+#     if not reading_list:
+#         return jsonify({'status': 'error', 'message': 'Reading list not found.'}), 404
+
+#     # Check if the book is already in the reading list
+#     existing_book = ReadingListBook.query.filter_by(reading_list_id=reading_list_id, book_id=book_id).first()
+#     if existing_book:
+#         # If the book is already in the list, respond accordingly
+#         return jsonify({'status': 'error', 'message': 'Book already in the reading list.'}), 409
+
+#     # If the book is not in the list, add it
+#     try:
+#         new_book_to_list = ReadingListBook(reading_list_id=reading_list_id, book_id=book_id)
+#         db.session.add(new_book_to_list)
+#         db.session.commit()
+#         return jsonify({'status': 'success', 'message': 'Book added to reading list successfully.'})
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({'status': 'error', 'message': 'An error occurred while adding the book to the reading list.'}), 500

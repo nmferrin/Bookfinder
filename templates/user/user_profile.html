@@ -4,11 +4,34 @@
 <div class="user-profile container">
     <h1>User Profile: {{ user.username }}</h1>
     <p>Date Joined: {{ user.created_at.strftime('%Y-%m-%d') }}</p>
+
     <h2>Favorite Books</h2>
     <ul>
         {% for favorite in favorites %}
-            <li>{{ favorite.title }} by {{ favorite.author }}</li>  <!-- Adjust as per your Favorite model -->
+            <li>
+                <!-- Link to book detail page -->
+                <a href="{{ url_for('book_detail', book_id=favorite.book_id.replace('works/', '')) }}">
+                    {{ favorite.title }} by {{ favorite.author }}
+                </a>
+                
+                <!-- Delete favorite form -->
+                <form action="{{ url_for('delete_favorite', favorite_id=favorite.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure?');">
+                    <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
+                    <button type="submit" class="btn btn-danger btn-sm">X</button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
+
+    <a href="{{url_for('view_reading_lists')}}"><h2>My Reading Lists</h2></a>
+    {% if user.reading_lists %}
+        <ul>
+            {% for reading_list in user.reading_lists %}
+                <li><a href="{{ url_for('view_reading_list', list_id=reading_list.id) }}">{{ reading_list.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no reading lists yet.</p>
+    {% endif %}
 </div>
 {% endblock %}

@@ -41,3 +41,47 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+
+
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     document.querySelectorAll('.add-to-reading-list-btn').forEach(item => {
+//         item.addEventListener('click', function(e) {
+//             e.preventDefault();
+
+//             const bookId = this.getAttribute('data-book-id');
+//             const readingListId = this.getAttribute('data-list-id');
+//             const bookTitle = this.getAttribute('data-book-title');
+//             const bookAuthor = this.getAttribute('data-book-author');
+//             const coverUrl = this.getAttribute('data-cover-url');
+
+//             addToReadingList(bookId, readingListId, bookTitle, bookAuthor, coverUrl);
+//         });
+//     });
+// });
+
+// function addToReadingList(bookId, readingListId, title, author, coverUrl) {
+//     fetch(`/add-to-reading-list`, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//             book_id: bookId,
+//             reading_list_id: readingListId,
+//             title: title,
+//             author: author,
+//             cover_url: coverUrl
+//         }),
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         alert(data.message); // Show a message to the user
+//     })
+//     .catch((error) => {
+//         console.error('Error:', error);
+//     });
+// }
+
+

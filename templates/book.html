@@ -3,22 +3,18 @@
 {% block content %}
 <div class="book-details container">
     <h1>{{ book.title }}</h1>
-    <img src="https://covers.openlibrary.org/b/id/{{ book.covers[0] }}-L.jpg" alt="Cover of {{ book.title }}">
+    
+    {% if book.get('covers') %}
+        <img src="https://covers.openlibrary.org/b/id/{{ book.covers[0] }}-L.jpg" alt="Cover of {{ book.title }}">
+    {% else %}
+        <img src="{{ url_for('static', filename='images/Default_Cover.jpg') }}" alt="Default cover" class="default-cover">
+    {% endif %}
     <!-- <h2>By {{ author_name }}</h2> -->
     <p>{{ description|safe }}</p>
 
     {% if book_description %}
         <p>{{ book_description }}</p>
     {% endif %}
-    <!-- Adjusting cover URL to use one of the cover IDs in the covers list -->
-    <!-- <img src="https://covers.openlibrary.org/b/id/{{ book.covers[0] }}-L.jpg" alt="Cover of {{ book.title }}"> -->
-    
-    <!-- <button class="favorite-btn" 
-            data-book-id="{{ book.key }}" 
-            data-title="{{ book.title }}" 
-            data-author="{{ author_name }}" 
-            data-cover-url="https://covers.openlibrary.org/b/id/{{ book.cover_i }}-M.jpg">
-        <i class="far fa-star"></i>
-    </button> -->
+    <button onclick="window.history.back()" class="btn btn-outline-secondary">Return</button>
 </div>
 {% endblock %}

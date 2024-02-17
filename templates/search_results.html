@@ -8,7 +8,7 @@
             {% for book in results.docs %}
                 <div class="col">
                     <div class="card h-100">
-                        <img src="{{ 'https://covers.openlibrary.org/b/id/' + book.cover_i|string + '-M.jpg' if book.cover_i else url_for('static', filename='images/Default_Cover.jpg') }}" class="card-img-top" alt="{{ book.title }} cover">
+                        <img src="{{ 'https://covers.openlibrary.org/b/id/' + book.cover_i|string + '-M.jpg' if book.cover_i else url_for('static', filename='images/Default_Cover.jpg') }}" class="card-img-top default-cover" alt="{{ book.title }} cover">
                         <div class="card-body">
                             <h5 class="card-title"><a href="{{ url_for('book_detail', book_id=book.key.split('/')[-1]) }}">{{ book.title }}</a></h5>
                             <p class="card-text">by {{ book.author_name[0] if book.author_name else 'Unknown Author' }}</p>
