@@ -90,7 +90,7 @@ def book_detail(book_id):
         return "Book details not found", 404
     if 'description' in book_data:
         book_description = process_description(book_data['description'])
-    else:
+    else:  
         book_description = "No description available."
     
     return render_template('book.html', book=book_data, description=book_description)

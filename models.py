@@ -92,7 +92,7 @@ class ReadingList(db.Model):
 class ReadingListBook(db.Model):
     __tablename__ = 'reading_list_books'
     id = db.Column(db.Integer, primary_key=True)
-    reading_list_id = db.Column(db.Integer, db.ForeignKey('reading_lists.id'), nullable=False)
+    reading_list_id = db.Column(db.Integer, db.ForeignKey('reading_lists.id'))
     # favorite_id = db.Column(db.Integer, db.ForeignKey('favorites.id')) 
     book_id = db.Column(db.String(120), nullable=False)
     title = db.Column(db.String(255))  # Added for display
