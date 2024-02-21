@@ -1,11 +1,7 @@
 # BookFinder Application
-
-## Basic Routes Complete
-
-## To-do
-- Finish the styling
-- Add to reading list from search results
-- Organization and separating business logic
+This is my first capstone project with the Springboard bootcamp using
+the Open Library API to retrieve the book information to be saved onto the application's database and make reading lists.
+The application uses Flask along with Python, a bit of Javascript, and Tailwind for styling.
 
 ## Stretch Goals
 - AI-driven book recommendations
