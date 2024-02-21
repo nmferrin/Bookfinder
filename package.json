@@ -1,0 +1,18 @@
+{
+  "name": "bookfinder",
+  "version": "1.0.0",
+  "description": "## Basic Routes Complete",
+  "main": "index.js",
+  "scripts": {
+    "build-css": "tailwindcss -i static/css/style.css -o static/css/tailwind.css",
+    "watch-css": "nodemon -e css -x \"npm run build-css\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1"
+  }
+}

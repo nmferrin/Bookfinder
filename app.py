@@ -50,6 +50,7 @@ def do_logout():
     '''logs user out'''
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+        
 
 @app.route("/")
 def home():
@@ -155,7 +156,7 @@ def signup():
         return render_template('user/signup.html', form=form)
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     """Handle logout of user."""
 
@@ -249,17 +250,21 @@ def add_book_to_reading_list(list_id):
     reading_list = ReadingList.query.get_or_404(list_id)
     form = NewBookForReadingListForm()
 
-    # Get the current books on the reading list to exclude them from the choices
-    curr_on_readlist = [book.id for book in reading_list.reading_list_books]
+    # Get the current book_ids on the reading list to exclude them from the choices
+    curr_on_readlist = [book.book_id for book in reading_list.reading_list_books]
 
-    # Populate form.book_id.choices correctly
-    # Ensure you're extracting the IDs and titles in a format the form expects
-    form.book_id.choices = [(str(fav.id), fav.title) for fav in Favorite.query.filter(Favorite.user_id == reading_list.user_id, Favorite.id.notin_(curr_on_readlist)).all()]
+    # Populate form.book_id.choices with user favorites not already in the reading list
+    user_favorites = Favorite.query.filter(Favorite.user_id == reading_list.user_id).all()
+    form.book_id.choices = [(str(fav.id), fav.title) for fav in user_favorites if fav.book_id not in curr_on_readlist]
 
     if form.validate_on_submit():
-        # Fetch the Favorite entry based on the selected book_id from the form
         selected_favorite = Favorite.query.get(int(form.book_id.data))
-
+        
+        # Check if the book is already in the reading list
+        if selected_favorite.book_id in curr_on_readlist:
+            flash("This book is already in your reading list.", "warning")
+            return render_template("reading_lists/add_book.html", reading_list=reading_list, form=form)
+        
         # Create a new ReadingListBook entry
         new_book_to_list = ReadingListBook(reading_list_id=list_id, book_id=selected_favorite.book_id, author=selected_favorite.author, title=selected_favorite.title, cover_url=selected_favorite.cover_url)
         db.session.add(new_book_to_list)
@@ -272,13 +277,14 @@ def add_book_to_reading_list(list_id):
 
 
 
+
 # Edit a reading list
 @app.route('/reading-lists/edit/<int:list_id>', methods=['GET', 'POST'])
 def edit_reading_list(list_id):
     reading_list = ReadingList.query.get_or_404(list_id)
     if g.user.id != reading_list.user_id:
         flash("You do not have permission to edit this reading list.", "danger")
-        return redirect(url_for('view_reading_lists'))
+        return redirect(url_for('user_profile'))
     
     form = EditReadingListForm(obj=reading_list)
     
@@ -287,25 +293,51 @@ def edit_reading_list(list_id):
         reading_list.description = form.description.data
         db.session.commit()
         flash('Reading list updated successfully.', 'success')
-        return redirect(url_for('view_reading_lists'))
+        return redirect(url_for('user_profile'))
     elif request.method == 'GET':
         form.name.data = reading_list.name
         form.description.data = reading_list.description
 
     return render_template('reading_lists/edit.html', form=form, list_id=list_id)
 
-
-# Delete a reading list
-@app.route('/reading-lists/delete/<int:list_id>', methods=['POST'])
-def delete_reading_list(list_id):
-    reading_list = ReadingList.query.get_or_404(list_id)
-    if g.user.id != reading_list.user_id:
+@app.route('/reading-lists/book/<int:reading_list_book_id>/delete', methods=['POST'])
+def delete_book_from_reading_list(reading_list_book_id):
+    if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/login")
+
+    reading_list_book = ReadingListBook.query.get_or_404(reading_list_book_id)
+
+    # Optional: Check if the current user owns the reading list
+    if reading_list_book.reading_list.user_id != g.user.id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/reading-lists")
+
+    db.session.delete(reading_list_book)
+    db.session.commit()
+
+    flash("Book removed from the reading list.", "success")
+    return redirect(url_for('view_reading_list', list_id=reading_list_book.reading_list_id))
+
+
+
+# Delete a reading list
+@app.route('/reading-lists/<int:list_id>/delete', methods=['POST'])
+def delete_reading_list(list_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect(url_for('login'))
+
+    reading_list = ReadingList.query.get_or_404(list_id)
+    if reading_list.user_id != g.user.id:
+        flash("Access unauthorized.", "danger")
+        return redirect(url_for('view_reading_lists'))
+
     db.session.delete(reading_list)
     db.session.commit()
-    flash("Reading list deleted!", "success")
+    flash("Reading list deleted.", "success")
     return redirect(url_for('view_reading_lists'))
+
 
 # view details of a specific reading list
 @app.route('/reading-lists/view/<int:list_id>')

@@ -1,37 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="user-profile container">
-    <h1>User Profile: {{ user.username }}</h1>
-    <p>Date Joined: {{ user.created_at.strftime('%Y-%m-%d') }}</p>
+<div class="flex flex-col justify-center items-center min-h-screen p-10 rounded-lg shadow-lg mx-auto">
+    <h1 class="text-2xl text-white font-bold">{{ user.username }}</h1>
+    <p class="text-md text-indigo-200">Joined {{ user.created_at.strftime('%Y-%m-%d') }}</p>
 
-    <h2>Favorite Books</h2>
-    <ul>
+    <h2 class="text-xl text-white font-semibold">Saved Books</h2>
+    {% if favorites %}
+    <ul class="list-disc pl-5 text-indigo-100 bg-gradient-to-r from-gray-700/75 via-gray-600/75 to-gray-700/75 py-5 px-5 rounded-lg">
         {% for favorite in favorites %}
-            <li>
+            <li class="mt-2 flex justify-between items-center">
                 <!-- Link to book detail page -->
-                <a href="{{ url_for('book_detail', book_id=favorite.book_id.replace('works/', '')) }}">
+                <a href="{{ url_for('book_detail', book_id=favorite.book_id.replace('works/', '')) }}" class="hover:text-blue-400 transition duration-300 ease-in-out font-bold">
                     {{ favorite.title }} by {{ favorite.author }}
                 </a>
                 
                 <!-- Delete favorite form -->
-                <form action="{{ url_for('delete_favorite', favorite_id=favorite.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure?');">
+                <form action="{{ url_for('delete_favorite', favorite_id=favorite.id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?');">
                     <input type="hidden" name="favorite_id" value="{{ favorite.id }}">
-                    <button type="submit" class="btn btn-danger btn-sm">X</button>
+                    <button type="submit" class="ml-5 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2 py-1 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Delete</button>
                 </form>
-            </li>
         {% endfor %}
     </ul>
-
-    <a href="{{url_for('view_reading_lists')}}"><h2>My Reading Lists</h2></a>
-    {% if user.reading_lists %}
-        <ul>
-            {% for reading_list in user.reading_lists %}
-                <li><a href="{{ url_for('view_reading_list', list_id=reading_list.id) }}">{{ reading_list.name }}</a></li>
-            {% endfor %}
-        </ul>
     {% else %}
-        <p>You have no reading lists yet.</p>
+        <p class="text-indigo-200">You have no favorite books yet.</p>
     {% endif %}
+
+    <a href="{{url_for('view_reading_lists')}}" class="text-xl text-white font-semibold hover:underline mt-6">My Reading Lists</a>
+    <div class="mt-2 list-disc pl-5 text-indigo-100 bg-gradient-to-r from-gray-700/75 via-gray-600/75 to-gray-700/75 py-5 px-20 rounded-lg">
+        {% if user.reading_lists %}
+            <ul class="list-disc pl-5 text-indigo-100 mt-2">
+                {% for reading_list in user.reading_lists %}
+                    <li><a href="{{ url_for('view_reading_list', list_id=reading_list.id) }}" class="text-blue-300 hover:text-blue-400 transition duration-300 ease-in-out">{{ reading_list.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-indigo-200 mt-2">You have no reading lists yet.</p>
+        {% endif %}
+    </div>
+    <div class="mt-6">
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="mx-2 w-40 py-2.5 px-5 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                Logout
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}
+

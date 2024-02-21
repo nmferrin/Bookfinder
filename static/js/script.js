@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if(data.status === 'success') {
-                    // Optionally, change the star to a filled star to indicate it's a favorite
+                    //change the star to a filled star to indicate it's a favorite
                     this.innerHTML = '<i class="fas fa-star"></i>'; // Switch to a filled star icon
-                    alert(data.message); // Or update the UI to reflect the favorite status
+                    alert(data.message); //update the UI to reflect the favorite status
                 } else {
                     alert(data.message);
                 }

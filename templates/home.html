@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<form method="POST" action="/search" class="container">
-    <input type="text" name="query" placeholder="Search for books">
-    <button type="submit">Search</button>
-</form>
-
+<div class="flex items-center justify-center h-screen">
+    <form method="POST" action="/search" class="flex flex-col items-center w-full max-w-md px-4">
+        <h1 class="text-center font-extrabold text-5xl text-transparent bg-clip-text bg-gradient-to-r to-emerald-100 from-purple-300 mb-5">BookFinder</h1>
+        <div class="relative w-full">
+            <!-- Search input and button -->
+            <input type="text" id="search" name="query" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for books" required>
+            <button type="submit" class="text-white absolute right-2.5 bottom-2.5 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80 font-medium rounded-lg text-sm px-4 py-2 text-center">Search</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
+
 !

@@ -3,23 +3,24 @@
 {% block body_class %}onboarding{% endblock %}
 
 {% block content %}
-
-<div class="container">
-    <div class="col-md-7 col-lg-5">
-        <h2 class="join-message">Join today.</h2>
-        <form method="POST" id="user_form">
+<div class="flex items-center justify-center min-h-screen  py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8 bg-gradient-to-r from-indigo-900/75 via-gray-500/50 to-indigo-900/75 p-10 rounded-lg">
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r to-emerald-100 from-purple-300">Join today.</h2>
+        <form method="POST" id="user_form" class="mt-8 space-y-6">
             {{ form.hidden_tag() }}
-
             {% for field in form if field.widget.input_type != 'hidden' %}
-              {% for error in field.errors %}
-                <span class="text-danger">{{ error }}</span>
-              {% endfor %}
-              {{ field(placeholder=field.label.text, class="form-control") }}
+            <div>
+                {% for error in field.errors %}
+                <span class="text-red-500 text-sm">{{ error }}</span>
+                {% endfor %}
+                <label for="{{ field.id }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field.label.text }}</label>
+                {{ field(class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light", placeholder=field.label.text) }}
+            </div>
             {% endfor %}
-      
-            <button class="btn btn-primary btn-lg btn-block">Sign me up!</button>
+            <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 shadow-lg shadow-purple-500/50 dark:shadow-lg dark:shadow-purple-800/80">
+                Sign me up!
+            </button>
         </form>
     </div>
 </div>
-
 {% endblock %}
