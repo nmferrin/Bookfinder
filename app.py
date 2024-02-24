@@ -1,10 +1,10 @@
 import os
-from flask import Flask, render_template, request, flash, redirect, session, g, url_for, jsonify
+from flask import Flask, render_template, request, flash, redirect, session, g, url_for, jsonify, Blueprint
 from flask.globals import g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from models import db, connect_db, User, Favorite, ReadingList, ReadingListBook
-from forms import LoginForm, RegisterForm, ReadingListForm, EditReadingListForm, NewBookForReadingListForm
+from models.models import db, connect_db, User, Favorite, ReadingList, ReadingListBook
+from forms.forms import LoginForm, RegisterForm, ReadingListForm, EditReadingListForm, NewBookForReadingListForm
 from api import search_books, get_book_details
 from func import process_description
 
@@ -228,7 +228,7 @@ def create_reading_list():
         db.session.add(new_list)
         db.session.commit()
         flash("Reading list created!", "success")
-        return redirect(url_for('view_reading_lists'))
+        return redirect(url_for('user_profile'))
 
     return render_template('reading_lists/new.html', form=form)
 
@@ -336,7 +336,7 @@ def delete_reading_list(list_id):
     db.session.delete(reading_list)
     db.session.commit()
     flash("Reading list deleted.", "success")
-    return redirect(url_for('view_reading_lists'))
+    return redirect(url_for('user_profile'))
 
 
 # view details of a specific reading list
@@ -347,33 +347,3 @@ def view_reading_list(list_id):
     books = ReadingListBook.query.filter_by(reading_list_id=list_id).all()
     return render_template('reading_lists/view.html', reading_list=reading_list, books=books)
 
-# @app.route('/add-to-reading-list', methods=['POST']) # Require user to be logged in
-# def add_to_reading_list():
-#     # Extract book_id and reading_list_id from the form data
-#     book_id = request.form.get('book_id')
-#     reading_list_id = request.form.get('reading_list_id')
-
-#     if not book_id or not reading_list_id:
-#         # Respond with an error if any field is missing
-#         return jsonify({'status': 'error', 'message': 'Missing data for adding book to reading list.'}), 400
-
-#     # Verify that the reading list belongs to the current user to prevent unauthorized additions
-#     reading_list = ReadingList.query.filter_by(id=reading_list_id, user_id=g.user.id).first()
-#     if not reading_list:
-#         return jsonify({'status': 'error', 'message': 'Reading list not found.'}), 404
-
-#     # Check if the book is already in the reading list
-#     existing_book = ReadingListBook.query.filter_by(reading_list_id=reading_list_id, book_id=book_id).first()
-#     if existing_book:
-#         # If the book is already in the list, respond accordingly
-#         return jsonify({'status': 'error', 'message': 'Book already in the reading list.'}), 409
-
-#     # If the book is not in the list, add it
-#     try:
-#         new_book_to_list = ReadingListBook(reading_list_id=reading_list_id, book_id=book_id)
-#         db.session.add(new_book_to_list)
-#         db.session.commit()
-#         return jsonify({'status': 'success', 'message': 'Book added to reading list successfully.'})
-#     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({'status': 'error', 'message': 'An error occurred while adding the book to the reading list.'}), 500
