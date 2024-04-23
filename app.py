@@ -3,11 +3,11 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask.globals import g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
-from models.models import db, connect_db, User, Favorite, ReadingList, ReadingListBook
-from forms.forms import LoginForm, RegisterForm, ReadingListForm, EditReadingListForm, NewBookForReadingListForm
+from models import db, connect_db, User, Favorite, ReadingList, ReadingListBook
+from forms import LoginForm, RegisterForm, ReadingListForm, EditReadingListForm, NewBookForReadingListForm
 from api import search_books, get_book_details
 from func import process_description
-
+  
 # from flask_login import login_required
 
 
@@ -66,22 +66,21 @@ def about():
 # API ROUTES
 
 # Handles API search data
-@app.route("/search", methods=["GET", "POST"])
+@app.route("/search")
 def search():
-    reading_lists = None  # Initialize variable to hold reading lists
+    reading_lists = None
     if g.user:
-        # Fetch the current user's reading lists if logged in
         reading_lists = ReadingList.query.filter_by(user_id=g.user.id).all()
 
-    if request.method == "POST":
-        query = request.form["query"]
+    # Use request.args.get() to retrieve query parameters for GET requests
+    query = request.args.get('query', '')  # Default to empty string if 'query' parameter is not present
+
+    if query:  # Proceed with search only if query parameter is provided
         results = search_books(query)
-        # Pass the user's reading lists along with the search results to the template
         return render_template("search_results.html", results=results, reading_lists=reading_lists)
-    else:
-        # If it's a GET request, just show the search page without results
-        # Make sure to pass the reading lists to the search template if it needs them
-        return render_template("search.html", reading_lists=reading_lists)
+
+    # If no query is provided, render the search page possibly with reading lists if the user is logged in
+    return render_template("search.html", reading_lists=reading_lists)
 
 #  Handles API book data
 @app.route('/book/<book_id>')
